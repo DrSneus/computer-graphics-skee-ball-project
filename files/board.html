@@ -25,17 +25,16 @@
 			import * as THREE from 'three';
 
 			var camera, scene, renderer;
-			var board, cylinder;
+      var boardAngle = Math.PI / 2.5;
       var radius = 200;
       var angle = 0;
-      var boardAngle = Math.PI / 2.5;
 
 			init();
 			animate();
 
 			function init() {
         // Creating the camera and scene
-				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
+				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
         camera.position.z = 600;
 				camera.position.y += 150;
 
@@ -88,7 +87,7 @@
         boardRamp.translateY(-50);
         boardRamp.translateZ(-84);
 
-        board = new THREE.Group();
+        let board = new THREE.Group();
         board.add( boardTop );
         board.add( boardBot );
         board.add( boardRamp );
