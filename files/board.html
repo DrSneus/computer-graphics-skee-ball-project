@@ -29,9 +29,11 @@
       var boardAngle = Math.PI / 2.5;
       var radius = 200;
       var angle = 0;
+      var design;
 
       var rampTranslateVal = 0;
 			const params = {
+        board: 0,
 				trackLength: 0
 			};
 
@@ -128,41 +130,21 @@
         box.add( boxLeft );
         box.add( boxDisplay );
 
-        // Creating cylinders
-        let cylinder20 = makeCylinder(70, 0, 0);
-        let points20 = makePoints(0, 45);
-        let cylinder30 = makeCylinder(20, 0, 5);
-        let points30 = makePoints(0, 5);
-        let cylinder40 = makeCylinder(20, 0, -40);
-        let points40 = makePoints(0, -40);
-        let cylinder50 = makeCylinder(20, 0, -100);
-        let points50 = makePoints(0, -100);
-        let cylinder100A = makeCylinder(20, 65, -120);
-        let points100A = makePoints(65, -120);
-        let cylinder100B = makeCylinder(20, -65, -120);
-        let points100B = makePoints(-65, -120);
+        // The board difficulty is decided by where the points are
+        makeBoard(0);
 
         // Adding everything to the scene
         scene.add( board );
-        scene.add( cylinder20 );
-        scene.add( points20 );
-        scene.add( cylinder30 );
-        scene.add( points30 );
-        scene.add( cylinder40 );
-        scene.add( points40 );
-        scene.add( cylinder50 );
-        scene.add( points50 );
-        scene.add( cylinder100A );
-        scene.add( points100A );
-        scene.add( cylinder100B );
-        scene.add( points100B );
-
         scene.add( box );
 
         // GUI
 				const gui = new GUI();
 
         // Updates the ramp's length, and box sides
+				gui.add( params, 'board', 0, 2).step( 1 ).onChange( function ( value ) {
+          makeBoard(value);
+        } );
+
 				gui.add( params, 'trackLength', -100, 100 ).step( 5 ).onChange( function ( value ) {
           boardBot.translateZ(value - rampTranslateVal);
           boxRight.translateZ(value - rampTranslateVal);
@@ -188,6 +170,68 @@
 				camera.updateProjectionMatrix();
 				renderer.setSize( window.innerWidth, window.innerHeight );
 			}
+
+      // Change Board
+      function makeBoard(boardNum){
+        scene.remove(design);
+        design = new THREE.Group();
+
+        if (boardNum == 0){
+          // Creating design for board 0
+          design.add(makeCylinder(70, 0, 0)); // 20
+          design.add(makePoints(0, 45));
+
+          design.add(makeCylinder(20, 0, 5)); // 30
+          design.add(makePoints(0, 5));
+
+          design.add(makeCylinder(20, 0, -40)); // 40
+          design.add(makePoints(0, -40));
+
+          design.add(makeCylinder(20, 0, -100)); // 50
+          design.add(makePoints(0, -100));
+
+          design.add(makeCylinder(20, 65, -120)); // 100
+          design.add(makePoints(65, -120));
+
+          design.add(makeCylinder(20, -65, -120)); // 100
+          design.add(makePoints(-65, -120));
+        }
+
+        else if (boardNum == 1){
+          // Creating design for board 1
+          design.add(makeCylinder(20, 0, -40)); // 20
+          design.add(makePoints(0, -40));
+
+          design.add(makeCylinder(20, 0, 25)); // 40
+          design.add(makePoints(0, 25));
+
+          design.add(makeCylinder(20, 0, -105)); // 40
+          design.add(makePoints(0, -105));
+
+          design.add(makeCylinder(20, 65, -40)); // 50
+          design.add(makePoints(65, -40));
+          
+          design.add(makeCylinder(20, -65, -40)); // 50
+          design.add(makePoints(-65, -40));
+        }
+
+        else if (boardNum == 2){
+          // Creating design for board 2
+          design.add(makeCylinder(20, 60, 35)); // 100
+          design.add(makePoints(60, 35));
+
+          design.add(makeCylinder(20, -60, 35)); // 100
+          design.add(makePoints(-60, 35));
+
+          design.add(makeCylinder(20, 60, -115)); // 100
+          design.add(makePoints(60, -115));
+
+          design.add(makeCylinder(20, -60, -115)); // 100
+          design.add(makePoints(-60, -115));
+        }
+
+        scene.add( design );
+      }
 
       // Makes the cylinders where the ball can score points
       function makeCylinder(outerRadius, x, y){
