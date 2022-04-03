@@ -123,20 +123,33 @@
 
         // Creating cylinders
         let cylinder20 = makeCylinder(70, 0, 0);
+        let points20 = makePoints(0, 45);
         let cylinder30 = makeCylinder(20, 0, 5);
+        let points30 = makePoints(0, 5);
         let cylinder40 = makeCylinder(20, 0, -40);
+        let points40 = makePoints(0, -40);
         let cylinder50 = makeCylinder(20, 0, -100);
+        let points50 = makePoints(0, -100);
         let cylinder100A = makeCylinder(20, 65, -120);
+        let points100A = makePoints(65, -120);
         let cylinder100B = makeCylinder(20, -65, -120);
+        let points100B = makePoints(-65, -120);
 
         // Adding everything to the scene
         scene.add( board );
         scene.add( cylinder20 );
+        scene.add( points20 );
         scene.add( cylinder30 );
+        scene.add( points30 );
         scene.add( cylinder40 );
+        scene.add( points40 );
         scene.add( cylinder50 );
+        scene.add( points50 );
         scene.add( cylinder100A );
+        scene.add( points100A );
         scene.add( cylinder100B );
+        scene.add( points100B );
+
         scene.add( box );
 
         // Rendering
@@ -177,20 +190,51 @@
         cylinder.translateY(-50);
         cylinder.rotation.x = ((Math.PI / 2) + boardAngle);
         cylinder.translateY(-250);
+        cylinder.translateZ(10);
 
         return cylinder;
+      }
+
+      // Makes the points where the ball can score points by touching
+      function makePoints(x, y){
+        // Creating hole
+        var outerShape = new THREE.Shape();
+        outerShape.absarc(x, y, 19.9, 0, Math.PI * 2, false);
+
+        let geometry = new THREE.ExtrudeGeometry(outerShape, {depth: 1});
+        let material = new THREE.MeshBasicMaterial( {color: 0x000000} );
+        let point = new THREE.Mesh( geometry, material );
+
+        // Rotates the point
+        point.translateY(-50);
+        point.rotation.x = ((Math.PI / 2) + boardAngle);
+        point.translateY(-250);
+        
+        // Pushes the hole against the board
+        point.translateZ(59.7)
+
+        return point;
       }
 
       // Animates
 			function animate() {
 				requestAnimationFrame( animate );
+        
+        // FOR TESTING: Rotating camera
         /*
         camera.rotation.y = -angle/2;
         camera.position.x = radius * Math.cos( angle );  
         camera.position.z = radius * Math.sin( angle );
         angle += 0.01;
         */
-
+        
+        // FOR TESTING: Sideways camera
+        /*
+        camera.rotation.y = -angle/2;
+        camera.position.x = radius * Math.cos( angle );  
+        camera.position.z = radius * Math.sin( angle );
+        angle = 3.83;
+        */
 				renderer.render( scene, camera );
 			}
 
