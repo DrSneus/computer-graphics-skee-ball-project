@@ -23,15 +23,22 @@
 		<script type="module">
 
 			import * as THREE from 'three';
+			import { GUI } from './jsm/libs/lil-gui.module.min.js';
 
 			var camera, scene, renderer;
       var boardAngle = Math.PI / 2.5;
       var radius = 200;
       var angle = 0;
 
+      var rampTranslateVal = 0;
+			const params = {
+				trackLength: 0
+			};
+
 			init();
 			animate();
 
+      // Main function
 			function init() {
         // Creating the camera and scene
 				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
@@ -93,7 +100,7 @@
         board.add( boardRamp );
 
         // Creating a box to contain the game
-        geometry = new THREE.BoxGeometry( 450, 50, 500 );
+        geometry = new THREE.BoxGeometry( 450, 50, 550 );
         material = new THREE.MeshBasicMaterial( {color: 0x964B00});
 				let boxRight = new THREE.Mesh( geometry, material );
         let boxLeft = new THREE.Mesh( geometry, material );
@@ -151,6 +158,18 @@
         scene.add( points100B );
 
         scene.add( box );
+
+        // GUI
+				const gui = new GUI();
+
+        // Updates the ramp's length, and box sides
+				gui.add( params, 'trackLength', -100, 100 ).step( 5 ).onChange( function ( value ) {
+          boardBot.translateZ(value - rampTranslateVal);
+          boxRight.translateZ(value - rampTranslateVal);
+          boxLeft.translateZ(value - rampTranslateVal);
+          camera.translateZ(value - rampTranslateVal);
+          rampTranslateVal = value;
+				} );
 
         // Rendering
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
