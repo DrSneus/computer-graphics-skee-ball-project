@@ -39,7 +39,9 @@
 		rotateBall: 0
 	  };
 	  var ballCenter = 0;
-	  var ballRotate = 0
+	  var ballRotate = 0;
+	  var mouseStart = 0;
+	  var mouseEnd = 0;
 	  
 		
 			init();
@@ -142,7 +144,6 @@
 		let ball = new THREE.Mesh(geometry, material);
 		ball.translateY(10 - (Math.tan(Math.PI / 12)*200) + 30);		
 		ball.translateZ(200);
-		scene.add( ball );
 		
 		//Add direction arrow
 		geometry = new THREE.PlaneGeometry(10, 30);
@@ -163,7 +164,6 @@
 		arrow.rotateX(Math.PI/12);
 		arrow.translateY(40);
 		arrow.translateZ(125);
-		scene.add(arrow);
 		
         // The board difficulty is decided by where the points are
         makeBoard(0);
@@ -171,6 +171,8 @@
         // Adding everything to the scene
         scene.add( board );
         scene.add( box );
+		scene.add( ball );
+		scene.add(arrow);
 
         // BoardGUI
 				const gui = new GUI();
@@ -189,7 +191,7 @@
 				} );
 				
 		//Moves the ball and arrow left to right
-				gui.add( params, 'moveBall', -110, 110 ).step( 1 ).onChange( function ( value ) {
+				gui.add( params, 'moveBall', -95, 95 ).step( 1 ).onChange( function ( value ) {
 					ball.position.set(value, 10 - (Math.tan(Math.PI / 12)*200) + 30, 200);
 					ballCenter = value;
 					arrow.position.set(ballCenter, 40, 0);
@@ -216,6 +218,13 @@
 				// Event Listeners
 				window.addEventListener( 'resize', onWindowResize );
 
+				window.addEventListener( 'mousedown', function(event){
+					mouseStart = event.clientY;
+				});
+				window.addEventListener( 'mouseup', function(event){
+					mouseEnd = event.clientY;
+					console.log(mouseStart-mouseEnd);
+				});
 			}
 
       // Resize Window
