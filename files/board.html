@@ -43,6 +43,15 @@
 	  var mouseStart = 0;
 	  var mouseEnd = 0;
 	  
+	  var ball;
+	  var ballCollision;
+	  var rampCollisionBox;
+	  var inProgress = 0;
+	  var velocityInit = -1;
+	  var xvelocity = 0;
+	  var yvelocity = Math.tan(Math.PI/12);
+	  var zvelocity = velocityInit;
+	  
 		
 			init();
 			animate();
@@ -103,6 +112,9 @@
         boardRamp.rotation.x = (Math.PI / 2.5);
         boardRamp.translateY(-50);
         boardRamp.translateZ(-84);
+		
+		rampCollisionBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+		rampCollisionBox.setFromObject(boardRamp);
 
         let board = new THREE.Group();
         board.add( boardTop );
@@ -112,7 +124,7 @@
         // Creating a box to contain the game
         geometry = new THREE.BoxGeometry( 450, 50, 550 );
         material = new THREE.MeshBasicMaterial( {color: 0x964B00});
-				let boxRight = new THREE.Mesh( geometry, material );
+		let boxRight = new THREE.Mesh( geometry, material );
         let boxLeft = new THREE.Mesh( geometry, material );
 
         boxRight.rotation.z = (Math.PI / 2);
@@ -124,6 +136,7 @@
         boxLeft.translateX(150);
         boxLeft.translateY(125);
         boxLeft.translateZ(-50);
+
 
         // Adding a display to the box
         geometry = new THREE.BoxGeometry( 250, 40, 100 );
@@ -141,9 +154,11 @@
 		//Adding ball to the scene
 		geometry = new THREE.SphereGeometry(15, 32, 16);
 		material = new THREE.MeshBasicMaterial( { color:0xffffff } );
-		let ball = new THREE.Mesh(geometry, material);
+		ball = new THREE.Mesh(geometry, material);
 		ball.translateY(10 - (Math.tan(Math.PI / 12)*200) + 30);		
 		ball.translateZ(200);
+		
+		ballCollision = new THREE.Sphere(ball.position, 15);
 		
 		//Add direction arrow
 		geometry = new THREE.PlaneGeometry(10, 30);
@@ -172,7 +187,9 @@
         scene.add( board );
         scene.add( box );
 		scene.add( ball );
-		scene.add(arrow);
+		scene.add( ballCollision );
+		scene.add( arrow );
+		scene.add( rampCollisionBox );
 
         // BoardGUI
 				const gui = new GUI();
@@ -205,6 +222,11 @@
 					arrow.position.set(ballCenter, 40, 0);
 					arrow.rotation.set(Math.PI/12, -Math.PI*value/180, 0);
 					ballRotate = Math.PI*value/180;
+					xvelocity = Math.sin(ballRotate);
+					zvelocity = velocityInit * Math.cos(ballRotate);
+					yvelocity = Math.tan(Math.PI/12) * -zvelocity;
+					console.log(xvelocity);
+					console.log(zvelocity);
 					arrow.translateX(Math.sin(ballRotate)*200);
 					arrow.translateZ((Math.cos(ballRotate)*200)-75);
 				} );
@@ -223,7 +245,8 @@
 				});
 				window.addEventListener( 'mouseup', function(event){
 					mouseEnd = event.clientY;
-					console.log(mouseStart-mouseEnd);
+					inProgress = 1;
+					//console.log(mouseStart-mouseEnd);
 				});
 			}
 
@@ -345,6 +368,24 @@
       // Animates
 			function animate() {
 				requestAnimationFrame( animate );
+				
+				//Ball Movement
+				if(inProgress){
+					ball.translateX(xvelocity);
+					ball.translateY(yvelocity);
+					ball.translateZ(zvelocity);
+				}
+				
+				ballCollision.set( ball.position, 15 );
+				if(rampCollisionBox.intersectsSphere(ballCollision)){
+					yvelocity = Math.tan(Math.PI/2.5)*-zvelocity;
+				}
+				if(ball.position.x - 15 <= -110 || ball.position.x + 15 >= 110){
+					xvelocity *= -1;
+				}
+				
+				
+				
         
         // FOR TESTING: Rotating camera
         /*
