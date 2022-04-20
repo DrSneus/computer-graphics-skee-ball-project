@@ -139,12 +139,12 @@
 
 
         // Adding a display to the box
-        geometry = new THREE.BoxGeometry( 250, 40, 100 );
+        geometry = new THREE.BoxGeometry( 250, 40, 300 );
         material = new THREE.MeshBasicMaterial( {color: 0x362511});
         let boxDisplay = new THREE.Mesh( geometry, material );
 
         boxDisplay.translateY(350);
-        boxDisplay.translateZ(-50);
+        boxDisplay.translateZ(-100);
 
         let box = new THREE.Group();
         box.add( boxRight );
@@ -186,10 +186,10 @@
         // Adding everything to the scene
         scene.add( board );
         scene.add( box );
-		scene.add( ball );
-		scene.add( ballCollision );
-		scene.add( arrow );
-		scene.add( rampCollisionBox );
+		    scene.add( ball );
+		    scene.add( ballCollision );
+	    	scene.add( arrow );
+		    scene.add( rampCollisionBox );
 
         // BoardGUI
 				const gui = new GUI();
