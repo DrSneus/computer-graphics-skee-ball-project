@@ -47,11 +47,11 @@
 	  var ballCollision;
 	  var rampCollisionBox;
 	  var inProgress = 0;
-	  var velocityInit = -1;
+	  var velocityInit = -2;
 	  var xvelocity = 0;
-	  var yvelocity = Math.tan(Math.PI/12);
+	  var yvelocity = Math.tan(Math.PI/12) * -velocityInit;
 	  var zvelocity = velocityInit;
-    var gravVelocity = .1;
+    var gravVelocity = .3;
     var rampIntersect = false;
 	  
 		
@@ -226,7 +226,7 @@
             arrow.position.set(ballCenter, 40, 0);
             arrow.rotation.set(Math.PI/12, -Math.PI*value/180, 0);
             ballRotate = Math.PI*value/180;
-            xvelocity = Math.sin(ballRotate);
+            xvelocity = Math.sin(ballRotate) * -velocityInit;
             zvelocity = velocityInit * Math.cos(ballRotate);
             yvelocity = Math.tan(Math.PI/12) * -zvelocity;
             console.log(xvelocity);
@@ -251,6 +251,7 @@
 				window.addEventListener( 'mouseup', function(event){
 					mouseEnd = event.clientY;
 					inProgress = 1;
+          arrow.position.set(500, 500, 500);
 					//console.log(mouseStart-mouseEnd);
 				});
 			}
