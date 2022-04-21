@@ -46,6 +46,8 @@
 	  var ball;
 	  var ballCollision;
 	  var rampCollisionBox;
+	  var boardCollisionBox;
+	  
 	  var inProgress = 0;
 	  var velocityInit = -2;
 	  var xvelocity = 0;
@@ -117,6 +119,9 @@
 		
         rampCollisionBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
         rampCollisionBox.setFromObject(boardRamp);
+
+        boardCollisionBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+        boardCollisionBox.setFromObject(boardTop);
 
         let board = new THREE.Group();
         board.add( boardTop );
@@ -192,6 +197,7 @@
 		    scene.add( ballCollision );
 	    	scene.add( arrow );
 		    scene.add( rampCollisionBox );
+			scene.add( boardCollisionBox );
 
         // BoardGUI
 				const gui = new GUI();
@@ -421,6 +427,10 @@
 				if(ball.position.x - 15 <= -110 || ball.position.x + 15 >= 110){
 					xvelocity *= -1;
 				}
+				
+		if(boardCollisionBox.intersectsSphere(ballCollision)){
+			inProgress = 0;
+		}
 				
 				
 				
