@@ -197,7 +197,7 @@
 		    scene.add( ballCollision );
 	    	scene.add( arrow );
 		    scene.add( rampCollisionBox );
-			scene.add( boardCollisionBox );
+			  scene.add( boardCollisionBox );
 
         // BoardGUI
 				const gui = new GUI();
@@ -232,11 +232,6 @@
             arrow.position.set(ballCenter, 40, 0);
             arrow.rotation.set(Math.PI/12, -Math.PI*value/180, 0);
             ballRotate = Math.PI*value/180;
-            xvelocity = Math.sin(ballRotate) * -velocityInit;
-            zvelocity = velocityInit * Math.cos(ballRotate);
-            yvelocity = Math.tan(Math.PI/12) * -zvelocity;
-            console.log(xvelocity);
-            console.log(zvelocity);
             arrow.translateX(Math.sin(ballRotate)*200);
             arrow.translateZ((Math.cos(ballRotate)*200)-75);
           }
@@ -273,8 +268,9 @@
               }
 
               // Sets velocity
-              yvelocity = Math.tan(Math.PI/12) * -velocityInit;
-	            zvelocity = velocityInit;
+              xvelocity = Math.sin(ballRotate) * -velocityInit;
+              zvelocity = velocityInit * Math.cos(ballRotate);
+              yvelocity = Math.tan(Math.PI/12) * -zvelocity;
 
               // Hides GUI
               gui.close();
