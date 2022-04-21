@@ -49,8 +49,8 @@
 	  var inProgress = 0;
 	  var velocityInit = -2;
 	  var xvelocity = 0;
-	  var yvelocity = Math.tan(Math.PI/12) * -velocityInit;
-	  var zvelocity = velocityInit;
+    var yvelocity;
+    var zvelocity;
     var gravVelocity = .3;
     var rampIntersect = false;
 	  
@@ -249,10 +249,28 @@
 					mouseStart = event.clientY;
 				});
 				window.addEventListener( 'mouseup', function(event){
-					mouseEnd = event.clientY;
-					inProgress = 1;
-          arrow.position.set(500, 500, 500);
-					//console.log(mouseStart-mouseEnd);
+          if(!inProgress){
+            // Checks that it's within a bounding box
+            if (event.clientY < 545 && event.clientY > 350
+            && event.clientX < 845 && event.clientX > 450){
+              mouseEnd = event.clientY;
+              inProgress = 1;
+              arrow.position.set(500, 500, 500);
+
+              // Speed of ball
+              velocityInit = (mouseStart - mouseEnd) / 40;
+              if (velocityInit < -5){
+                velocityInit = -5;
+              }
+              else if (velocityInit > -2){
+                velocityInit = -2;
+              }
+
+              // Sets velocity
+              yvelocity = Math.tan(Math.PI/12) * -velocityInit;
+	            zvelocity = velocityInit;
+            }
+          }
 				});
 			}
 
