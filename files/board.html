@@ -51,6 +51,8 @@
 	  var xvelocity = 0;
 	  var yvelocity = Math.tan(Math.PI/12);
 	  var zvelocity = velocityInit;
+    var gravVelocity = .1;
+    var rampIntersect = false;
 	  
 		
 			init();
@@ -380,9 +382,23 @@
 				}
 				
 				ballCollision.set( ball.position, 15 );
-				if(rampCollisionBox.intersectsSphere(ballCollision)){
-					yvelocity = Math.tan(Math.PI/2.5)*-zvelocity;
-				}
+
+        // Ramp checking
+        if(!rampIntersect){
+          if(rampCollisionBox.intersectsSphere(ballCollision)){
+            yvelocity = Math.tan(Math.PI/2.5)*-zvelocity;
+            rampIntersect = true;
+          }
+        }
+        // On the ramp
+        else{
+          // Passed the ramp
+          if(!rampCollisionBox.intersectsSphere(ballCollision)){
+            yvelocity -= gravVelocity;
+          }
+        }
+
+        // Edge checking
 				if(ball.position.x - 15 <= -110 || ball.position.x + 15 >= 110){
 					xvelocity *= -1;
 				}
