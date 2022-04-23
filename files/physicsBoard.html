@@ -91,7 +91,7 @@
               else if (velocityInit > -2){
                 velocityInit = -2;
               }
-              ball.setLinearVelocity(new THREE.Vector3(0, velocityInit * -50, velocityInit * 80));
+              ball.setLinearVelocity(new THREE.Vector3(-Math.sin(ballRotate) * 300 * velocityInit, 0, Math.cos(ballRotate) * 300 * velocityInit));
 
               // Hides GUI
               scene.remove(arrow);
@@ -143,9 +143,9 @@
         boardBot.rotation.x = (Math.PI / 12);
 
         boardRamp.add( boardRampLine );
-        boardRamp.rotation.x = (Math.PI / 2.5);
-        boardRamp.translateY(-50);
-        boardRamp.translateZ(-84);
+        boardRamp.rotation.x = (Math.PI / 2.9);
+        boardRamp.translateY(30);
+        boardRamp.translateZ(-30);
 
         // Creating a box to contain the game
         geometry = new THREE.BoxGeometry( 450, 50, 550 );
@@ -172,8 +172,8 @@
         boxDisplay.translateZ(-100);
 
         //Adding ball to the scene
-        geometry = new THREE.SphereGeometry(15, 32, 16);
-        material = new THREE.MeshBasicMaterial( { color:0xffffff } );
+        geometry = new THREE.SphereGeometry(10, 32, 16);
+        material = new THREE.MeshBasicMaterial( { color:0xff0000 } );
         ball = new Physijs.SphereMesh(geometry, material, 1);
         ball.translateY(30 - (Math.tan(Math.PI / 12)*200) + 30);		
         ball.translateZ(200);
@@ -210,6 +210,16 @@
         scene.add( boxDisplay );
         scene.add( ball );
         scene.add( arrow );
+
+        // FOR TESTING: SIDEWAYS CAMERA
+        /*
+        scene.remove(boxLeft)
+        angle = 3.3;
+        camera.rotation.y = -angle/2;
+        camera.position.x = -500 + radius * Math.cos( angle );  
+        camera.position.z = -50 + radius * Math.sin( angle );
+        */
+
       }
 
       // Change Board
@@ -223,27 +233,6 @@
         design = new Physijs.BoxMesh( geometry, material, 0 );
 
         if (boardNum == 0){
-          // Creating design for board 0        
-          design.add(makeCylinder(70, 0, 0)); // 20
-          design.add(makePoints(0, 45));
-
-          design.add(makeCylinder(20, 0, 5)); // 30
-          design.add(makePoints(0, 5));
-
-          design.add(makeCylinder(20, 0, -40)); // 40
-          design.add(makePoints(0, -40));
-
-          design.add(makeCylinder(20, 0, -100)); // 50
-          design.add(makePoints(0, -100));
-
-          design.add(makeCylinder(20, 65, -120)); // 100
-          design.add(makePoints(65, -120));
-
-          design.add(makeCylinder(20, -65, -120)); // 100
-          design.add(makePoints(-65, -120));
-        }
-
-        else if (boardNum == 1){
           // Creating design for board 1
           design.add(makeCylinder(20, 0, -40)); // 20
           design.add(makePoints(0, -40));
@@ -259,6 +248,24 @@
           
           design.add(makeCylinder(20, -65, -40)); // 50
           design.add(makePoints(-65, -40));
+        }
+
+        else if (boardNum == 1){
+          // Creating design for board 0
+          design.add(makeCylinder(20, 0, 5)); // 30
+          design.add(makePoints(0, 5));
+
+          design.add(makeCylinder(20, 0, -40)); // 40
+          design.add(makePoints(0, -40));
+
+          design.add(makeCylinder(20, 0, -100)); // 50
+          design.add(makePoints(0, -100));
+
+          design.add(makeCylinder(20, 65, -120)); // 100
+          design.add(makePoints(65, -120));
+
+          design.add(makeCylinder(20, -65, -120)); // 100
+          design.add(makePoints(-65, -120));
         }
 
         else if (boardNum == 2){
