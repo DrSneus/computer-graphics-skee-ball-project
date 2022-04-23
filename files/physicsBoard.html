@@ -20,7 +20,7 @@
 
       // Geometry Variables
       var boardAngle = Math.PI / 2.5, radius = 200, angle = 0;
-      var ball, boardTop, boardBot, boardRamp, arrow, boxRight, boxLeft;
+      var ball, boardTop, boardBot, boardRamp, arrow, boxRight, boxLeft, boxDisplay;
 
       // GUI Variables
       const gui = new GUI();
@@ -40,7 +40,6 @@
       
       var inProgress = 0;
       var velocityInit = -2;
-      var xvelocity, yvelocity, zvelocity;
 				
       // Main function
 			function init() {
@@ -80,7 +79,6 @@
             && event.clientX < 845 && event.clientX > 450){
               mouseEnd = event.clientY;
               inProgress = 1;
-              scene.remove(arrow);
 
               // Enables gravity once the ball is released
               scene.setGravity(new THREE.Vector3( 0, -300, 0 ));
@@ -96,74 +94,63 @@
               ball.setLinearVelocity(new THREE.Vector3(0, velocityInit * -50, velocityInit * 80));
 
               // Hides GUI
+              scene.remove(arrow);
               gui.close();
             }
           }
 				});
 
-
         // Begins animation
         animate();
 			}
 
-      // Makes all geometries
+      // Adds all geometries to the scene
       function makeGeometries(){
         // Variables
         let geometry, material;
 
         // Creating the board's top geometry
-				geometry = new THREE.BoxGeometry( 220, 50, 400 );
-				material = new THREE.MeshBasicMaterial( {color: 0x6CBB3C});
+        geometry = new THREE.BoxGeometry( 220, 50, 400 );
+        material = new THREE.MeshBasicMaterial( {color: 0x6CBB3C});
 
-				let boardTopRect = new Physijs.BoxMesh( geometry, material, 0 );
+        boardTop = new Physijs.BoxMesh( geometry, material, 0 );
         let boardTopEdge = new THREE.EdgesGeometry( geometry );
         let boardTopLine = new THREE.LineSegments( boardTopEdge, new THREE.LineBasicMaterial( { color: 0x000000 } ) );
 
         // Creating the board's bottom geometry
-				geometry = new THREE.BoxGeometry( 220, 50, 400 );
-				material = new THREE.MeshBasicMaterial( {color: 0x437C17});
+        geometry = new THREE.BoxGeometry( 220, 50, 400 );
+        material = new THREE.MeshBasicMaterial( {color: 0x437C17});
 
-				let boardBotRect = new Physijs.BoxMesh( geometry, material, 0 );
+        boardBot = new Physijs.BoxMesh( geometry, material, 0 );
         let boardBotEdge = new THREE.EdgesGeometry( geometry );
         let boardBotLine = new THREE.LineSegments( boardBotEdge, new THREE.LineBasicMaterial( { color: 0x000000 } ) );
 
         // Creating the board's ramp
         geometry = new THREE.BoxGeometry( 220, 10, 50 );
-				material = new THREE.MeshBasicMaterial( {color: 0x437C17});
+        material = new THREE.MeshBasicMaterial( {color: 0x437C17});
 
-				let boardRampRect = new Physijs.BoxMesh( geometry, material, 0 );
+        boardRamp = new Physijs.BoxMesh( geometry, material, 0 );
         let boardRampEdge = new THREE.EdgesGeometry( geometry );
         let boardRampLine = new THREE.LineSegments( boardRampEdge, new THREE.LineBasicMaterial( { color: 0x000000 } ) );
 
-        // Grouping and adding the parts of the board to the scene
-        boardTop = new THREE.Group();
-        boardTop.add( boardTopRect );
+        // Parenting and adding the parts of the board to the scene
         boardTop.add( boardTopLine );
         boardTop.rotation.x = boardAngle;
         boardTop.translateY(-100);
         boardTop.translateZ(-200);
 
-        boardBot = new THREE.Group();
-        boardBot.add( boardBotRect );
         boardBot.add( boardBotLine );
         boardBot.rotation.x = (Math.PI / 12);
 
-        boardRamp = new THREE.Group();
-        boardRamp.add( boardRampRect );
         boardRamp.add( boardRampLine );
         boardRamp.rotation.x = (Math.PI / 2.5);
         boardRamp.translateY(-50);
         boardRamp.translateZ(-84);
 
-        let board = new THREE.Group();
-        board.add( boardTop );
-        board.add( boardBot );
-        board.add( boardRamp );
-
         // Creating a box to contain the game
         geometry = new THREE.BoxGeometry( 450, 50, 550 );
         material = new THREE.MeshBasicMaterial( {color: 0x964B00});
-    		boxRight = new Physijs.BoxMesh( geometry, material, 0 );
+        boxRight = new Physijs.BoxMesh( geometry, material, 0 );
         boxLeft = new Physijs.BoxMesh( geometry, material, 0 );
 
         boxRight.rotation.z = (Math.PI / 2);
@@ -179,23 +166,18 @@
         // Adding a display to the box
         geometry = new THREE.BoxGeometry( 250, 40, 300 );
         material = new THREE.MeshBasicMaterial( {color: 0x362511});
-        let boxDisplay = new Physijs.BoxMesh( geometry, material, 0 );
+        boxDisplay = new Physijs.BoxMesh( geometry, material, 0 );
 
         boxDisplay.translateY(350);
         boxDisplay.translateZ(-100);
-
-        let box = new THREE.Group();
-        box.add( boxRight );
-        box.add( boxLeft );
-        box.add( boxDisplay );
 
         //Adding ball to the scene
         geometry = new THREE.SphereGeometry(15, 32, 16);
         material = new THREE.MeshBasicMaterial( { color:0xffffff } );
         ball = new Physijs.SphereMesh(geometry, material, 1);
-        ball.translateY(10 - (Math.tan(Math.PI / 12)*200) + 30);		
+        ball.translateY(30 - (Math.tan(Math.PI / 12)*200) + 30);		
         ball.translateZ(200);
-        
+
         //Add direction arrow
         geometry = new THREE.PlaneGeometry(10, 30);
         material = new THREE.MeshBasicMaterial( { color:0xff0000 } );
@@ -208,33 +190,40 @@
         let arrow2 = new Physijs.BoxMesh(geometry, material, 0);
         arrow2.translateZ(25);
         arrow2.rotateX(-Math.PI/2);
-        
+
         arrow = new THREE.Group();
         arrow.add( arrow1 );
         arrow.add( arrow2 );
         arrow.rotateX(Math.PI/12);
-        arrow.translateY(40);
+        arrow.translateY(60);
         arrow.translateZ(125);
-		
+
         // The board difficulty is decided by where the points are
         makeBoard(0);
 
         // Adding everything to the scene
-        scene.add( board );
-        scene.add( box );
-		    scene.add( ball );
-	    	scene.add( arrow );
+        scene.add( boardTop );
+        scene.add( boardBot );
+        scene.add( boardRamp );
+        scene.add( boxRight );
+        scene.add( boxLeft );
+        scene.add( boxDisplay );
+        scene.add( ball );
+        scene.add( arrow );
       }
 
       // Change Board
       function makeBoard(boardNum){
-        if(design){
+        if (design){
           scene.remove(design);
         }
-        design = new THREE.Group();
+
+        let geometry = new THREE.BoxGeometry( 0, 0, 0 );
+        let material = new THREE.MeshBasicMaterial( {color: 0x6CBB3C});
+        design = new Physijs.BoxMesh( geometry, material, 0 );
 
         if (boardNum == 0){
-          // Creating design for board 0
+          // Creating design for board 0        
           design.add(makeCylinder(70, 0, 0)); // 20
           design.add(makePoints(0, 45));
 
@@ -286,9 +275,8 @@
           design.add(makeCylinder(20, -60, -115)); // 100
           design.add(makePoints(-60, -115));
         }
-
-        scene.add( design );
-	}
+        scene.add(design);
+    	}
 
       // Makes the cylinders where the ball can score points
       function makeCylinder(outerRadius, x, y){
@@ -352,11 +340,11 @@
         } );
 
         //Moves the ball and arrow left to right
-        gui.add( params, 'moveBall', -95, 95 ).step( 1 ).onChange( function ( value ) {
+        gui.add( params, 'moveBall', -85, 85 ).step( 1 ).onChange( function ( value ) {
           if(!inProgress){
-            ball.position.set(value, 10 - (Math.tan(Math.PI / 12)*200) + 30, 200);
+            ball.position.set(value, 30 - (Math.tan(Math.PI / 12)*200) + 30, 200);
             ballCenter = value;
-            arrow.position.set(ballCenter, 40, 0);
+            arrow.position.set(ballCenter, 60, 0);
             arrow.rotation.set(Math.PI/12, -ballRotate, 0);
             arrow.translateX(Math.sin(ballRotate)*200);
             arrow.translateZ((Math.cos(ballRotate)*200)-75);
@@ -367,7 +355,7 @@
         //Sets ball launch angle
         gui.add( params, 'rotateBall', -90, 90 ).step( 1 ).onChange( function ( value ) {
           if (!inProgress){
-            arrow.position.set(ballCenter, 40, 0);
+            arrow.position.set(ballCenter, 60, 0);
             arrow.rotation.set(Math.PI/12, -Math.PI*value/180, 0);
             ballRotate = Math.PI*value/180;
             arrow.translateX(Math.sin(ballRotate)*200);
