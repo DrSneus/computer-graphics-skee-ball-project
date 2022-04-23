@@ -156,11 +156,8 @@
         boardRamp.translateY(-25);
         boardRamp.translateZ(-70);
 		
-        rampCollisionBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
-        rampCollisionBox.setFromObject(boardRamp);
-
-        boardCollisionBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
-        boardCollisionBox.setFromObject(boardTop);
+        rampCollisionBox = new THREE.Box3().setFromObject( boardRamp );
+        boardCollisionBox = new THREE.Box3().setFromObject( boardTop );
 
         board = new THREE.Group();
         board.add( boardTop );
@@ -420,7 +417,7 @@
 				}
 				
         if(boardCollisionBox.intersectsSphere(ballCollision)){
-          inProgress = 0;
+          //inProgress=0;
         }
         
         // FOR TESTING: Rotating camera
