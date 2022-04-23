@@ -1,66 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>three.js webgl - geometry - cube</title>
+		<title>Three.JS Skee-Ball</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<link type="text/css" rel="stylesheet" href="main.css">
 	</head>
 	<body>
 
-		<!-- Import maps polyfill -->
-		<!-- Remove this when import maps will be widely supported -->
-		<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
-
-		<script type="importmap">
-			{
-				"imports": {
-					"three": "../build/three.module.js"
-				}
-			}
-		</script>
-
 		<script type="module">
+      import * as THREE from '../build/three.module.js';
+      import { GUI } from './jsm/libs/lil-gui.module.min.js';
 
-			import * as THREE from 'three';
-			import { GUI } from './jsm/libs/lil-gui.module.min.js';
-
-			var camera, scene, renderer;
+      var camera, scene, renderer;
       var boardAngle = Math.PI / 2.5;
       var radius = 200;
       var angle = 0;
       var design;
 
       var rampTranslateVal = 0;
-	  const params = {
-		board: 0,
-		trackLength: 0,
-		moveBall: 0,
-		rotateBall: 0
-	  };
-	  var ballCenter = 0;
-	  var ballRotate = 0;
-	  var mouseStart = 0;
-	  var mouseEnd = 0;
-	  
-	  var ball;
-	  var ballCollision;
-	  var rampCollisionBox;
-	  var boardCollisionBox;
-	  
-	  var inProgress = 0;
-	  var velocityInit = -2;
-	  var xvelocity = 0;
-    var yvelocity;
-    var zvelocity;
-    var gravVelocity = .3;
-    var rampIntersect = false;
-	  
+
+      const params = {
+        board: 0,
+        trackLength: 0,
+        moveBall: 0,
+        rotateBall: 0
+      };
+
+      var ballCenter = 0;
+      var ballRotate = 0;
+      var mouseStart = 0;
+      var mouseEnd = 0;
+      
+      var ball;
+      var ballCollision;
+      var rampCollisionBox;
+      var boardCollisionBox;
+      
+      var inProgress = 0;
+      var velocityInit = -2;
+      var xvelocity = 0;
+      var yvelocity;
+      var zvelocity;
+      var gravVelocity = .3;
+      var rampIntersect = false;
 		
 			init();
 			animate();
 		
-			
       // Main function
 			function init() {
         // Creating the camera and scene
@@ -144,7 +131,6 @@
         boxLeft.translateY(125);
         boxLeft.translateZ(-50);
 
-
         // Adding a display to the box
         geometry = new THREE.BoxGeometry( 250, 40, 300 );
         material = new THREE.MeshBasicMaterial( {color: 0x362511});
@@ -158,34 +144,35 @@
         box.add( boxLeft );
         box.add( boxDisplay );
 
-		//Adding ball to the scene
-		geometry = new THREE.SphereGeometry(15, 32, 16);
-		material = new THREE.MeshBasicMaterial( { color:0xffffff } );
-		ball = new THREE.Mesh(geometry, material);
-		ball.translateY(10 - (Math.tan(Math.PI / 12)*200) + 30);		
-		ball.translateZ(200);
-		
-		ballCollision = new THREE.Sphere(ball.position, 15);
-		
-		//Add direction arrow
-		geometry = new THREE.PlaneGeometry(10, 30);
-		material = new THREE.MeshBasicMaterial( { color:0xff0000 } );
-		let arrow1 = new THREE.Mesh(geometry, material);
-		arrow1.translateZ(-25);
-		arrow1.rotateX(-Math.PI/2);
 
-		geometry = new THREE.PlaneGeometry(10, 30);
-		material = new THREE.MeshBasicMaterial( { color:0xff0000 } );
-		let arrow2 = new THREE.Mesh(geometry, material);
-		arrow2.translateZ(25);
-		arrow2.rotateX(-Math.PI/2);
-		
-		let arrow = new THREE.Group();
-		arrow.add( arrow1 );
-		arrow.add( arrow2 );
-		arrow.rotateX(Math.PI/12);
-		arrow.translateY(40);
-		arrow.translateZ(125);
+        //Adding ball to the scene
+        geometry = new THREE.SphereGeometry(15, 32, 16);
+        material = new THREE.MeshBasicMaterial( { color:0xffffff } );
+        ball = new THREE.Mesh(geometry, material);
+        ball.translateY(10 - (Math.tan(Math.PI / 12)*200) + 30);		
+        ball.translateZ(200);
+        
+        ballCollision = new THREE.Sphere(ball.position, 15);
+        
+        //Add direction arrow
+        geometry = new THREE.PlaneGeometry(10, 30);
+        material = new THREE.MeshBasicMaterial( { color:0xff0000 } );
+        let arrow1 = new THREE.Mesh(geometry, material);
+        arrow1.translateZ(-25);
+        arrow1.rotateX(-Math.PI/2);
+
+        geometry = new THREE.PlaneGeometry(10, 30);
+        material = new THREE.MeshBasicMaterial( { color:0xff0000 } );
+        let arrow2 = new THREE.Mesh(geometry, material);
+        arrow2.translateZ(25);
+        arrow2.rotateX(-Math.PI/2);
+        
+        let arrow = new THREE.Group();
+        arrow.add( arrow1 );
+        arrow.add( arrow2 );
+        arrow.rotateX(Math.PI/12);
+        arrow.translateY(40);
+        arrow.translateZ(125);
 		
         // The board difficulty is decided by where the points are
         makeBoard(0);
@@ -215,7 +202,7 @@
           rampTranslateVal = value;
 				} );
 				
-		//Moves the ball and arrow left to right
+	    	//Moves the ball and arrow left to right
 				gui.add( params, 'moveBall', -95, 95 ).step( 1 ).onChange( function ( value ) {
           if(!inProgress){
             ball.position.set(value, 10 - (Math.tan(Math.PI / 12)*200) + 30, 200);
@@ -226,7 +213,8 @@
             arrow.translateZ((Math.cos(ballRotate)*200)-75);
           }
 				} );
-		//Sets ball launch angle
+
+    		//Sets ball launch angle
 				gui.add( params, 'rotateBall', -90, 90 ).step( 1 ).onChange( function ( value ) {
 					if (!inProgress){
             arrow.position.set(ballCenter, 40, 0);
@@ -249,6 +237,7 @@
 				window.addEventListener( 'mousedown', function(event){
 					mouseStart = event.clientY;
 				});
+
 				window.addEventListener( 'mouseup', function(event){
           if(!inProgress){
             // Checks that it's within a bounding box
@@ -427,12 +416,9 @@
 					xvelocity *= -1;
 				}
 				
-		if(boardCollisionBox.intersectsSphere(ballCollision)){
-			//inProgress = 0;
-		}
-				
-				
-				
+        if(boardCollisionBox.intersectsSphere(ballCollision)){
+          //inProgress = 0;
+        }
         
         // FOR TESTING: Rotating camera
         /*
@@ -453,6 +439,5 @@
 			}
 
 		</script>
-
 	</body>
 </html>
