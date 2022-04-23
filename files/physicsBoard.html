@@ -50,7 +50,7 @@
         
         // Creating the scene
         scene = new Physijs.Scene();
-        scene.setGravity(new THREE.Vector3( 0, -30, 0 ));
+        scene.setGravity(new THREE.Vector3( 0, 0, 0 ));
         scene.addEventListener(
           'update',
           function() {
@@ -80,9 +80,12 @@
             && event.clientX < 845 && event.clientX > 450){
               mouseEnd = event.clientY;
               inProgress = 1;
-              arrow.position.set(500, 500, 500);
+              scene.remove(arrow);
 
-              // Speed of ball
+              // Enables gravity once the ball is released
+              scene.setGravity(new THREE.Vector3( 0, -300, 0 ));
+
+              // Sets the velocity dependent on mouse drag
               velocityInit = (mouseStart - mouseEnd) / 40;
               if (velocityInit < -5){
                 velocityInit = -5;
@@ -90,11 +93,7 @@
               else if (velocityInit > -2){
                 velocityInit = -2;
               }
-
-              // Sets velocity
-              xvelocity = Math.sin(ballRotate) * -velocityInit;
-              zvelocity = velocityInit * Math.cos(ballRotate);
-              yvelocity = Math.tan(Math.PI/12) * -zvelocity;
+              ball.setLinearVelocity(new THREE.Vector3(0, velocityInit * -50, velocityInit * 80));
 
               // Hides GUI
               gui.close();
@@ -193,9 +192,13 @@
         //Adding ball to the scene
         geometry = new THREE.SphereGeometry(15, 32, 16);
         material = new THREE.MeshBasicMaterial( { color:0xffffff } );
-        ball = new Physijs.SphereMesh(geometry, material);
+        ball = new Physijs.SphereMesh(geometry, material, 1);
         ball.translateY(10 - (Math.tan(Math.PI / 12)*200) + 30);		
         ball.translateZ(200);
+
+        ball.addEventListener( 'collision', function( other_object, linear_velocity, angular_velocity ) {
+            alert("COLLIDE")
+        });
         
         //Add direction arrow
         geometry = new THREE.PlaneGeometry(10, 30);
@@ -376,13 +379,14 @@
         } );
       }
 
-     // Resize Window
-     function onWindowResize() {
+      // Resize Window
+      function onWindowResize() {
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 				renderer.setSize( window.innerWidth, window.innerHeight );
 			}
 
+      // Performs the animation
       function animate(){
         requestAnimationFrame( render );
 		    scene.simulate();
