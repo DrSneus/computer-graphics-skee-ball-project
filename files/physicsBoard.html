@@ -12,7 +12,7 @@
 
     <script type="module">      
       Physijs.scripts.worker = '../physijs_worker.js';
-      Physijs.scripts.ammo = 'js/ammo.js';
+      Physijs.scripts.ammo = 'files/js/ammo.js';
       import { GUI } from './jsm/libs/lil-gui.module.min.js';
 
       // Scene Variables
@@ -50,7 +50,7 @@
         
         // Creating the scene
         scene = new Physijs.Scene();
-        scene.setGravity(new THREE.Vector3( 30, -30, 0 ));
+        scene.setGravity(new THREE.Vector3( 0, -30, 0 ));
         scene.addEventListener(
           'update',
           function() {
@@ -63,7 +63,6 @@
         camera.position.z = 600;
 				camera.position.y = 150;
 
-				scene = new Physijs.Scene;
         makeGeometries();
         makeGUI();
 
