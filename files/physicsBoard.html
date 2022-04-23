@@ -195,10 +195,6 @@
         ball = new Physijs.SphereMesh(geometry, material, 1);
         ball.translateY(10 - (Math.tan(Math.PI / 12)*200) + 30);		
         ball.translateZ(200);
-
-        ball.addEventListener( 'collision', function( other_object, linear_velocity, angular_velocity ) {
-            alert("COLLIDE")
-        });
         
         //Add direction arrow
         geometry = new THREE.PlaneGeometry(10, 30);
@@ -364,6 +360,7 @@
             arrow.rotation.set(Math.PI/12, -ballRotate, 0);
             arrow.translateX(Math.sin(ballRotate)*200);
             arrow.translateZ((Math.cos(ballRotate)*200)-75);
+            ball.__dirtyPosition = true;
           }
         } );
 
@@ -375,6 +372,7 @@
             ballRotate = Math.PI*value/180;
             arrow.translateX(Math.sin(ballRotate)*200);
             arrow.translateZ((Math.cos(ballRotate)*200)-75);
+            ball.__dirtyRotation = true;
           }
         } );
       }
