@@ -340,8 +340,11 @@
 
         gui.add( params, 'trackLength', -100, 100 ).step( 5 ).onChange( function ( value ) {
           boardBot.translateZ(value - rampTranslateVal);
+          boardBot.__dirtyPosition = true;
           boxRight.translateZ(value - rampTranslateVal);
+          boxRight.__dirtyPosition = true;
           boxLeft.translateZ(value - rampTranslateVal);
+          boxLeft.__dirtyPosition = true;
           camera.translateZ(value - rampTranslateVal);
           rampTranslateVal = value;
         } );
