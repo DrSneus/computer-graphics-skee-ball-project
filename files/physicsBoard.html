@@ -62,6 +62,11 @@
         camera.position.z = 600;
 				camera.position.y = 150;
 
+        // Creating light
+        const light = new THREE.PointLight( 0xffffff, 1, 0 );
+        light.position.set( 0, 200, 300 );
+        scene.add( light );
+
         makeGeometries();
         makeGUI();
 
@@ -111,7 +116,7 @@
 
         // Creating the board's top geometry
         geometry = new THREE.BoxGeometry( 220, 50, 400 );
-        material = new THREE.MeshBasicMaterial( {color: 0x6CBB3C});
+        material = new THREE.MeshLambertMaterial( {color: 0x6CBB3C});
 
         boardTop = new Physijs.BoxMesh( geometry, material, 0 );
         let boardTopEdge = new THREE.EdgesGeometry( geometry );
@@ -119,7 +124,7 @@
 
         // Creating the board's bottom geometry
         geometry = new THREE.BoxGeometry( 220, 50, 400 );
-        material = new THREE.MeshBasicMaterial( {color: 0x437C17});
+        material = new THREE.MeshLambertMaterial( {color: 0x437C17});
 
         boardBot = new Physijs.BoxMesh( geometry, material, 0 );
         let boardBotEdge = new THREE.EdgesGeometry( geometry );
@@ -127,7 +132,7 @@
 
         // Creating the board's ramp
         geometry = new THREE.BoxGeometry( 220, 10, 50 );
-        material = new THREE.MeshBasicMaterial( {color: 0x437C17});
+        material = new THREE.MeshLambertMaterial( {color: 0x437C17});
 
         boardRamp = new Physijs.BoxMesh( geometry, material, 0 );
         let boardRampEdge = new THREE.EdgesGeometry( geometry );
@@ -149,7 +154,7 @@
 
         // Creating a box to contain the game
         geometry = new THREE.BoxGeometry( 450, 50, 550 );
-        material = new THREE.MeshBasicMaterial( {color: 0x964B00});
+        material = new THREE.MeshLambertMaterial( {color: 0x964B00});
         boxRight = new Physijs.BoxMesh( geometry, material, 0 );
         boxLeft = new Physijs.BoxMesh( geometry, material, 0 );
 
@@ -165,7 +170,7 @@
 
         // Adding a display to the box
         geometry = new THREE.BoxGeometry( 250, 40, 300 );
-        material = new THREE.MeshBasicMaterial( {color: 0x362511});
+        material = new THREE.MeshLambertMaterial( {color: 0x362511});
         boxDisplay = new Physijs.BoxMesh( geometry, material, 0 );
 
         boxDisplay.translateY(350);
@@ -173,7 +178,7 @@
 
         //Adding ball to the scene
         geometry = new THREE.SphereGeometry(10, 32, 16);
-        material = new THREE.MeshBasicMaterial( { color:0xff0000 } );
+        material = new THREE.MeshLambertMaterial( { color:0xff0000 } );
         ball = new Physijs.SphereMesh(geometry, material, 1);
         ball.translateY(30 - (Math.tan(Math.PI / 12)*200) + 30);		
         ball.translateZ(200);
@@ -229,7 +234,7 @@
         }
 
         let geometry = new THREE.BoxGeometry( 0, 0, 0 );
-        let material = new THREE.MeshBasicMaterial( {color: 0x6CBB3C});
+        let material = new THREE.MeshLambertMaterial( {color: 0x6CBB3C});
         design = new Physijs.BoxMesh( geometry, material, 0 );
 
         if (boardNum == 0){
