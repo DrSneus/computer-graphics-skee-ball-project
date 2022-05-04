@@ -41,6 +41,10 @@
       var inProgress = 0;
       var velocityInit = -2;
 				
+	  var holeScores = {};
+	  
+	  var score = 0;
+				
       // Main function
 			function init() {
         renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -183,6 +187,15 @@
         ball.translateY(30 - (Math.tan(Math.PI / 12)*200) + 30);		
         ball.translateZ(200);
 		ball.setCcdMotionThreshold(1);
+		ball.addEventListener('collision', function(otherObject){
+			for(let i=0; i<holeScores.mesh.length; i++){;
+				if(holeScores.mesh[i].id === otherObject.id){
+					console.log(holeScores.score[i]);
+					score += holeScores.score[i];
+					scene.remove(ball);
+				}
+			}
+		});
 
         //Add direction arrow
         geometry = new THREE.PlaneGeometry(10, 30);
@@ -208,12 +221,6 @@
         // The board difficulty is decided by where the points are
         let holeScores = makeBoard(0);
 		
-		for(let i=0; i<holeScores.mesh.length; i++){
-			holeScores.mesh[i].addEventListener('collision', function(){
-				console.log(holeScores.score[i])
-			});
-		}
-		
 		console.log(holeScores.mesh);
 
         // Adding everything to the scene
@@ -227,13 +234,13 @@
         scene.add( arrow );
 
         // FOR TESTING: SIDEWAYS CAMERA
-        
+        /*
         scene.remove(boxLeft)
         angle = 3.3;
-//        camera.rotation.y = -angle/2;
+        camera.rotation.y = -angle/2;
         camera.position.x = -500 + radius * Math.cos( angle );  
-//        camera.position.z = -50 + radius * Math.sin( angle );
-		
+        camera.position.z = -50 + radius * Math.sin( angle );
+		*/
         
 
       }
@@ -241,44 +248,41 @@
       // Change Board
       function makeBoard(boardNum){
         if (design){
+		  for(let i=0; i<holeScores.mesh.length; i++){
+			scene.remove(holeScores.mesh[i]);
+		  }
           scene.remove(design);
         }
 
         let geometry = new THREE.BoxGeometry( 0, 0, 0 );
         let material = new THREE.MeshLambertMaterial( {color: 0x6CBB3C});
         design = new Physijs.BoxMesh( geometry, material, 0 );
-		let holeScores = {}
-		let scoreValues = []
-		let meshValues = []
+		let scoreValues = [];
+		let meshValues = [];
 
         if (boardNum == 0){
           // Creating design for board 1
 		  let hole = makeCylinder(20, 0, -40); // 20
-          design.add(hole);
 		  meshValues.push(hole);
 		  scoreValues.push(20);
 //          design.add(makePoints(0, -40));
 
 		  hole = makeCylinder(20, 0, 25); // 40
-          design.add(hole);
 		  meshValues.push(hole);
 		  scoreValues.push(40);
 //          design.add(makePoints(0, 25));
 
 		  hole = makeCylinder(20, 0, -105); // 40
-          design.add(hole);
 		  meshValues.push(hole);
 		  scoreValues.push(40);
 //          design.add(makePoints(0, -105));
 
 		  hole = makeCylinder(20, 65, -40); // 50
-          design.add(hole);
 		  meshValues.push(hole);
 		  scoreValues.push(50);
 //          design.add(makePoints(65, -40));
           
 		  hole = makeCylinder(20, -65, -40); // 50
-          design.add(hole);
 		  meshValues.push(hole);
 		  scoreValues.push(50);
 //          design.add(makePoints(-65, -40));
@@ -286,45 +290,59 @@
 
         else if (boardNum == 1){
           // Creating design for board 0
-          design.add(makeCylinder(20, 0, 5)); // 30
-          design.add(makePoints(0, 5));
+		  let hole = makeCylinder(20, 0, 5); // 30
+		  meshValues.push(hole);
+		  scoreValues.push(30);
+//          design.add(makePoints(0, 5));
 
-          design.add(makeCylinder(20, 0, -40)); // 40
-          design.add(makePoints(0, -40));
+		  hole = makeCylinder(20, 0, -40); // 40
+		  meshValues.push(hole);
+		  scoreValues.push(40);
+//          design.add(makePoints(0, -40));
 
-          design.add(makeCylinder(20, 0, -100)); // 50
-          design.add(makePoints(0, -100));
+		  hole = makeCylinder(20, 0, -100); // 50
+		  meshValues.push(hole);
+		  scoreValues.push(50);
+//          design.add(makePoints(0, -100));
 
-          design.add(makeCylinder(20, 65, -120)); // 100
-          design.add(makePoints(65, -120));
+		  hole = makeCylinder(20, 65, -120); // 100
+		  meshValues.push(hole);
+		  scoreValues.push(100);
+//          design.add(makePoints(65, -120));
 
-          design.add(makeCylinder(20, -65, -120)); // 100
-          design.add(makePoints(-65, -120));
+		  hole = makeCylinder(20, -65, -120); // 100
+		  meshValues.push(hole);
+		  scoreValues.push(100);
+//          design.add(makePoints(-65, -120));
         }
 
         else if (boardNum == 2){
           // Creating design for board 2
-          design.add(makeCylinder(20, 60, 35)); // 100
-          design.add(makePoints(60, 35));
+		  let hole = makeCylinder(20, 60, 35); // 100
+		  meshValues.push(hole);
+		  scoreValues.push(100);
+//          design.add(makePoints(60, 35));
 
-          design.add(makeCylinder(20, -60, 35)); // 100
-          design.add(makePoints(-60, 35));
+		  hole = makeCylinder(20, -60, 35); // 100
+		  meshValues.push(hole);
+		  scoreValues.push(100);
+//          design.add(makePoints(-60, 35));
 
-          design.add(makeCylinder(20, 60, -115)); // 100
-          design.add(makePoints(60, -115));
+		  hole = makeCylinder(20, 60, -115); // 100
+		  meshValues.push(hole);
+		  scoreValues.push(100);
+//          design.add(makePoints(60, -115));
 
-          design.add(makeCylinder(20, -60, -115)); // 100
-          design.add(makePoints(-60, -115));
+		  hole = makeCylinder(20, -60, -115); // 100
+		  meshValues.push(hole);
+		  scoreValues.push(100);
+//          design.add(makePoints(-60, -115));
         }
         scene.add(design);
 		holeScores.mesh = meshValues;
 		holeScores.score = scoreValues;
 		return holeScores;
     	}
-
-	  function scorePoints(ballObject){
-		console.log('score');
-	}
 
       // Makes the cylinders where the ball can score points
       function makeCylinder(outerRadius, x, y){
@@ -343,13 +361,16 @@
         let material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
         let cylinder = new Physijs.CylinderMesh( geometry, material, 0 );
 
-		geometry = new THREE.CylinderGeometry(outerRadius, outerRadius, 50, 20, 1);
+		geometry = new THREE.CylinderGeometry(outerRadius-15, outerRadius-15, 50, 20, 1);
         material = new THREE.MeshBasicMaterial( {color: 0x000000} );
         let hole = new Physijs.CylinderMesh( geometry, material, 0 );
+		
+		geometry = new THREE.CylinderGeometry(outerRadius-5, outerRadius-5, 50, 20, 1);
+        material = new THREE.MeshBasicMaterial( {color: 0x000000} );
+        let cylinderCenter = new Physijs.CylinderMesh( geometry, material, 0 );
         
 		
 		// Rotates cylinder
-//        cylinder.translateY(50);
         cylinder.rotation.x = boardAngle;
         cylinder.translateY(-60);
         cylinder.translateZ(-202);
@@ -362,8 +383,14 @@
         hole.translateZ(-202);
 		hole.translateX(x);
 		hole.translateZ(y);
-		hole.addEventListener( 'collision', function(other_object){ console.log('score') });
-		design.add(hole);
+		scene.add(hole);
+		
+		cylinderCenter.rotation.x = boardAngle;
+        cylinderCenter.translateY(-58);
+        cylinderCenter.translateZ(-202);
+		cylinderCenter.translateX(x);
+		cylinderCenter.translateZ(y);
+		design.add(cylinderCenter);
 
 		return hole;
       }
@@ -451,6 +478,7 @@
       render = function() {
         renderer.render( scene, camera); // render the scene
         requestAnimationFrame( render ); 
+		document.getElementById('score').innerHTML = 'Score: '+ score;
       };
 
       window.onload = init;
@@ -458,6 +486,7 @@
   </head>
 
   <body>
+	<div id="score">Score: </div>
     <div id="viewport"></div>
   </body>
 </html>
