@@ -193,8 +193,11 @@
 					console.log(holeScores.score[i]);
 					score += holeScores.score[i];
 					scene.remove(ball);
+					inProgress = 0;
 				}
 			}
+
+			
 		});
 
         //Add direction arrow
@@ -220,8 +223,6 @@
 
         // The board difficulty is decided by where the points are
         let holeScores = makeBoard(0);
-		
-		console.log(holeScores.mesh);
 
         // Adding everything to the scene
         scene.add( boardTop );
@@ -265,27 +266,22 @@
 		  let hole = makeCylinder(20, 0, -40); // 20
 		  meshValues.push(hole);
 		  scoreValues.push(20);
-//          design.add(makePoints(0, -40));
 
 		  hole = makeCylinder(20, 0, 25); // 40
 		  meshValues.push(hole);
 		  scoreValues.push(40);
-//          design.add(makePoints(0, 25));
 
 		  hole = makeCylinder(20, 0, -105); // 40
 		  meshValues.push(hole);
 		  scoreValues.push(40);
-//          design.add(makePoints(0, -105));
 
 		  hole = makeCylinder(20, 65, -40); // 50
 		  meshValues.push(hole);
 		  scoreValues.push(50);
-//          design.add(makePoints(65, -40));
           
 		  hole = makeCylinder(20, -65, -40); // 50
 		  meshValues.push(hole);
 		  scoreValues.push(50);
-//          design.add(makePoints(-65, -40));
         }
 
         else if (boardNum == 1){
@@ -293,27 +289,22 @@
 		  let hole = makeCylinder(20, 0, 5); // 30
 		  meshValues.push(hole);
 		  scoreValues.push(30);
-//          design.add(makePoints(0, 5));
 
 		  hole = makeCylinder(20, 0, -40); // 40
 		  meshValues.push(hole);
 		  scoreValues.push(40);
-//          design.add(makePoints(0, -40));
 
 		  hole = makeCylinder(20, 0, -100); // 50
 		  meshValues.push(hole);
 		  scoreValues.push(50);
-//          design.add(makePoints(0, -100));
 
 		  hole = makeCylinder(20, 65, -120); // 100
 		  meshValues.push(hole);
 		  scoreValues.push(100);
-//          design.add(makePoints(65, -120));
 
 		  hole = makeCylinder(20, -65, -120); // 100
 		  meshValues.push(hole);
 		  scoreValues.push(100);
-//          design.add(makePoints(-65, -120));
         }
 
         else if (boardNum == 2){
@@ -321,22 +312,18 @@
 		  let hole = makeCylinder(20, 60, 35); // 100
 		  meshValues.push(hole);
 		  scoreValues.push(100);
-//          design.add(makePoints(60, 35));
 
 		  hole = makeCylinder(20, -60, 35); // 100
 		  meshValues.push(hole);
 		  scoreValues.push(100);
-//          design.add(makePoints(-60, 35));
 
 		  hole = makeCylinder(20, 60, -115); // 100
 		  meshValues.push(hole);
 		  scoreValues.push(100);
-//          design.add(makePoints(60, -115));
 
 		  hole = makeCylinder(20, -60, -115); // 100
 		  meshValues.push(hole);
 		  scoreValues.push(100);
-//          design.add(makePoints(-60, -115));
         }
         scene.add(design);
 		holeScores.mesh = meshValues;
@@ -356,21 +343,22 @@
         holePath.absarc(x, y, innerRadius, 0, Math.PI * 2, true);
         outerShape.holes.push(holePath);
 
-//        let geometry = new THREE.ExtrudeGeometry(outerShape, {depth: 50});
+		//Create white outer cylinder
 		let geometry = new THREE.CylinderGeometry(outerRadius+5, outerRadius+5, 50, 20, 1);
         let material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
         let cylinder = new Physijs.CylinderMesh( geometry, material, 0 );
 
+		//Create smaller cylinder to detect scoring
 		geometry = new THREE.CylinderGeometry(outerRadius-15, outerRadius-15, 50, 20, 1);
         material = new THREE.MeshBasicMaterial( {color: 0x000000} );
         let hole = new Physijs.CylinderMesh( geometry, material, 0 );
 		
+		//Create black inner cylinder
 		geometry = new THREE.CylinderGeometry(outerRadius-5, outerRadius-5, 50, 20, 1);
         material = new THREE.MeshBasicMaterial( {color: 0x000000} );
         let cylinderCenter = new Physijs.CylinderMesh( geometry, material, 0 );
         
 		
-		// Rotates cylinder
         cylinder.rotation.x = boardAngle;
         cylinder.translateY(-60);
         cylinder.translateZ(-202);
@@ -393,28 +381,6 @@
 		design.add(cylinderCenter);
 
 		return hole;
-      }
-
-
-      // Makes the points where the ball can score points by touching
-      function makePoints(x, y){
-        // Creating hole
-        var outerShape = new THREE.Shape();
-        outerShape.absarc(x, y, 19.9, 0, Math.PI * 2, false);
-
-        let geometry = new THREE.ExtrudeGeometry(outerShape, {depth: 1});
-        let material = new THREE.MeshBasicMaterial( {color: 0x000000} );
-        let point = new Physijs.CylinderMesh( geometry, material, 0 );
-
-        // Rotates the point
-        point.translateY(-50);
-        point.rotation.x = ((Math.PI / 2) + boardAngle);
-        point.translateY(-250);
-        
-        // Pushes the hole against the board
-        point.translateZ(59.7)
-
-        return point;
       }
 
       // Makes the GUI
