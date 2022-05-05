@@ -41,6 +41,10 @@
       var inProgress = 0;
       var velocityInit = -2;
 				
+	  var holeScores = {};
+	  
+	  var score = 0;
+				
       // Main function
 			function init() {
         renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -182,6 +186,19 @@
         ball = new Physijs.SphereMesh(geometry, material, 1);
         ball.translateY(30 - (Math.tan(Math.PI / 12)*200) + 30);		
         ball.translateZ(200);
+		ball.setCcdMotionThreshold(1);
+		ball.addEventListener('collision', function(otherObject){
+			for(let i=0; i<holeScores.mesh.length; i++){;
+				if(holeScores.mesh[i].id === otherObject.id){
+					console.log(holeScores.score[i]);
+					score += holeScores.score[i];
+					scene.remove(ball);
+					inProgress = 0;
+				}
+			}
+
+			
+		});
 
         //Add direction arrow
         geometry = new THREE.PlaneGeometry(10, 30);
@@ -203,8 +220,9 @@
         arrow.translateY(60);
         arrow.translateZ(125);
 
+
         // The board difficulty is decided by where the points are
-        makeBoard(0);
+        let holeScores = makeBoard(0);
 
         // Adding everything to the scene
         scene.add( boardTop );
@@ -223,71 +241,94 @@
         camera.rotation.y = -angle/2;
         camera.position.x = -500 + radius * Math.cos( angle );  
         camera.position.z = -50 + radius * Math.sin( angle );
-        */
+		*/
+        
 
       }
 
       // Change Board
       function makeBoard(boardNum){
         if (design){
+		  for(let i=0; i<holeScores.mesh.length; i++){
+			scene.remove(holeScores.mesh[i]);
+		  }
           scene.remove(design);
         }
 
         let geometry = new THREE.BoxGeometry( 0, 0, 0 );
         let material = new THREE.MeshLambertMaterial( {color: 0x6CBB3C});
         design = new Physijs.BoxMesh( geometry, material, 0 );
+		let scoreValues = [];
+		let meshValues = [];
 
         if (boardNum == 0){
           // Creating design for board 1
-          design.add(makeCylinder(20, 0, -40)); // 20
-          design.add(makePoints(0, -40));
+		  let hole = makeCylinder(20, 0, -40); // 20
+		  meshValues.push(hole);
+		  scoreValues.push(20);
 
-          design.add(makeCylinder(20, 0, 25)); // 40
-          design.add(makePoints(0, 25));
+		  hole = makeCylinder(20, 0, 25); // 40
+		  meshValues.push(hole);
+		  scoreValues.push(40);
 
-          design.add(makeCylinder(20, 0, -105)); // 40
-          design.add(makePoints(0, -105));
+		  hole = makeCylinder(20, 0, -105); // 40
+		  meshValues.push(hole);
+		  scoreValues.push(40);
 
-          design.add(makeCylinder(20, 65, -40)); // 50
-          design.add(makePoints(65, -40));
+		  hole = makeCylinder(20, 65, -40); // 50
+		  meshValues.push(hole);
+		  scoreValues.push(50);
           
-          design.add(makeCylinder(20, -65, -40)); // 50
-          design.add(makePoints(-65, -40));
+		  hole = makeCylinder(20, -65, -40); // 50
+		  meshValues.push(hole);
+		  scoreValues.push(50);
         }
 
         else if (boardNum == 1){
           // Creating design for board 0
-          design.add(makeCylinder(20, 0, 5)); // 30
-          design.add(makePoints(0, 5));
+		  let hole = makeCylinder(20, 0, 5); // 30
+		  meshValues.push(hole);
+		  scoreValues.push(30);
 
-          design.add(makeCylinder(20, 0, -40)); // 40
-          design.add(makePoints(0, -40));
+		  hole = makeCylinder(20, 0, -40); // 40
+		  meshValues.push(hole);
+		  scoreValues.push(40);
 
-          design.add(makeCylinder(20, 0, -100)); // 50
-          design.add(makePoints(0, -100));
+		  hole = makeCylinder(20, 0, -100); // 50
+		  meshValues.push(hole);
+		  scoreValues.push(50);
 
-          design.add(makeCylinder(20, 65, -120)); // 100
-          design.add(makePoints(65, -120));
+		  hole = makeCylinder(20, 65, -120); // 100
+		  meshValues.push(hole);
+		  scoreValues.push(100);
 
-          design.add(makeCylinder(20, -65, -120)); // 100
-          design.add(makePoints(-65, -120));
+		  hole = makeCylinder(20, -65, -120); // 100
+		  meshValues.push(hole);
+		  scoreValues.push(100);
         }
 
         else if (boardNum == 2){
           // Creating design for board 2
-          design.add(makeCylinder(20, 60, 35)); // 100
-          design.add(makePoints(60, 35));
+		  let hole = makeCylinder(20, 60, 35); // 100
+		  meshValues.push(hole);
+		  scoreValues.push(100);
 
-          design.add(makeCylinder(20, -60, 35)); // 100
-          design.add(makePoints(-60, 35));
+		  hole = makeCylinder(20, -60, 35); // 100
+		  meshValues.push(hole);
+		  scoreValues.push(100);
 
-          design.add(makeCylinder(20, 60, -115)); // 100
-          design.add(makePoints(60, -115));
+		  hole = makeCylinder(20, 60, -115); // 100
+		  meshValues.push(hole);
+		  scoreValues.push(100);
 
-          design.add(makeCylinder(20, -60, -115)); // 100
-          design.add(makePoints(-60, -115));
+		  hole = makeCylinder(20, -60, -115); // 100
+		  meshValues.push(hole);
+		  scoreValues.push(100);
         }
         scene.add(design);
+		holeScores.mesh = meshValues;
+		holeScores.score = scoreValues;
+		return holeScores;
     	}
 
       // Makes the cylinders where the ball can score points
@@ -302,38 +343,44 @@
         holePath.absarc(x, y, innerRadius, 0, Math.PI * 2, true);
         outerShape.holes.push(holePath);
 
-        let geometry = new THREE.ExtrudeGeometry(outerShape, {depth: 50});
+		//Create white outer cylinder
+		let geometry = new THREE.CylinderGeometry(outerRadius+5, outerRadius+5, 50, 20, 1);
         let material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
         let cylinder = new Physijs.CylinderMesh( geometry, material, 0 );
 
-        // Rotates cylinder
-        cylinder.translateY(-50);
-        cylinder.rotation.x = ((Math.PI / 2) + boardAngle);
-        cylinder.translateY(-250);
-        cylinder.translateZ(10);
-
-        return cylinder;
-      }
-
-      // Makes the points where the ball can score points by touching
-      function makePoints(x, y){
-        // Creating hole
-        var outerShape = new THREE.Shape();
-        outerShape.absarc(x, y, 19.9, 0, Math.PI * 2, false);
-
-        let geometry = new THREE.ExtrudeGeometry(outerShape, {depth: 1});
-        let material = new THREE.MeshBasicMaterial( {color: 0x000000} );
-        let point = new Physijs.CylinderMesh( geometry, material, 0 );
-
-        // Rotates the point
-        point.translateY(-50);
-        point.rotation.x = ((Math.PI / 2) + boardAngle);
-        point.translateY(-250);
+		//Create smaller cylinder to detect scoring
+		geometry = new THREE.CylinderGeometry(outerRadius-15, outerRadius-15, 50, 20, 1);
+        material = new THREE.MeshBasicMaterial( {color: 0x000000} );
+        let hole = new Physijs.CylinderMesh( geometry, material, 0 );
+		
+		//Create black inner cylinder
+		geometry = new THREE.CylinderGeometry(outerRadius-5, outerRadius-5, 50, 20, 1);
+        material = new THREE.MeshBasicMaterial( {color: 0x000000} );
+        let cylinderCenter = new Physijs.CylinderMesh( geometry, material, 0 );
         
-        // Pushes the hole against the board
-        point.translateZ(59.7)
+		
+        cylinder.rotation.x = boardAngle;
+        cylinder.translateY(-60);
+        cylinder.translateZ(-202);
+		cylinder.translateX(x);
+		cylinder.translateZ(y);
+		design.add(cylinder);
+		
+		hole.rotation.x = boardAngle;
+        hole.translateY(-58);
+        hole.translateZ(-202);
+		hole.translateX(x);
+		hole.translateZ(y);
+		scene.add(hole);
+		
+		cylinderCenter.rotation.x = boardAngle;
+        cylinderCenter.translateY(-58);
+        cylinderCenter.translateZ(-202);
+		cylinderCenter.translateX(x);
+		cylinderCenter.translateZ(y);
+		design.add(cylinderCenter);
 
-        return point;
+		return hole;
       }
 
       // Makes the GUI
@@ -397,6 +444,7 @@
       render = function() {
         renderer.render( scene, camera); // render the scene
         requestAnimationFrame( render ); 
+		document.getElementById('score').innerHTML = 'Score: '+ score;
       };
 
       window.onload = init;
@@ -404,6 +452,7 @@
   </head>
 
   <body>
+	<div id="score">Score: </div>
     <div id="viewport"></div>
   </body>
 </html>
