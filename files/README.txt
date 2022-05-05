@@ -1,3 +1,0 @@
--physicsBoard.html is the new main file, it has collision working
--The collision is strange with the cylinders, sometimes it chooses to entirely ignore them
--Three.Group() does not work with the physics engine
